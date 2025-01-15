@@ -1,6 +1,7 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
+#  """
+# This module takes care of starting the API Server, Loading the DB and Adding the endpoints
+# """
+
 import os
 from flask import Flask, request, jsonify, url_for
 from flask_cors import CORS
@@ -15,6 +16,7 @@ CORS(app)
 # create the jackson family object
 jackson_family = FamilyStructure("Jackson")
 
+
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
@@ -25,6 +27,7 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+#obtener todos los miembros de la familia
 @app.route('/members', methods=['GET'])
 def handle_hello():
 
@@ -37,6 +40,48 @@ def handle_hello():
 
 
     return jsonify(response_body), 200
+
+# estoy obteniendo un miembro de la familia 
+@app.route('/member/<int:id>', methods=['GET']) 
+def obtener_solo_miembro(id):
+   member = jackson_family.get_member(id)
+   return jsonify(member), 200
+
+# estoy creando un nuevo miembro: siempre en el método post hay que capturarf la respuesta del cliente en en formato json
+@app.route('/member', methods=['POST'])
+def crear_miembro():
+    body = request.get_json(silent=True)
+    if body is None: 
+        return jsonify({"msg":"debes enviar informacion en el body"}), 400 
+    if "first_name" not in body: 
+       return jsonify({"msg":"first name es obligatorio"}), 400 
+    new_member = {
+        "fisrt_name": body["first_name"],
+        "last_name": jackson_family.last_name,
+        "age": body["age"],
+        "lucky_numbers": body["lucky_numbers"],
+    }
+    if "id" in body:
+        new_member["id"] = body["id"]
+    new_member = jackson_family.add_member(new_member)
+    return jsonify({"msg":"familiar agregado"}), 200
+
+    # member = request.json
+    # print("miembro añadido", member)
+    # #simepre la integracion en un metodo post hay qe gurdarla 
+    # jackson_family.add_member(member)
+    # return jsonify({"done":"familiar agregado"}), 200 
+    
+@app.route('/member/<int:member_id>', methods=['DELETE'])
+def borrar_miembro(member_id): 
+    print(member_id) 
+    jackson_family.delete_member(member_id) 
+    return jsonify({"message":"Miembro borrado con exito"}), 200 
+       
+
+
+
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
