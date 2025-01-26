@@ -44,8 +44,8 @@ def handle_hello():
 # estoy obteniendo un miembro de la familia 
 @app.route('/member/<int:id>', methods=['GET']) 
 def obtener_solo_miembro(id):
-   member = jackson_family.get_member(id)
-   return jsonify(member), 200
+   member, status_code = jackson_family.get_member(id)
+   return jsonify(member), status_code
 
 # estoy creando un nuevo miembro: siempre en el método post hay que capturarf la respuesta del cliente en en formato json
 @app.route('/member', methods=['POST'])
@@ -75,8 +75,8 @@ def crear_miembro():
 @app.route('/member/<int:member_id>', methods=['DELETE'])
 def borrar_miembro(member_id): 
     print(member_id) 
-    jackson_family.delete_member(member_id) 
-    return jsonify({"message":"Miembro borrado con exito"}), 200 
+    response, status_code = jackson_family.delete_member(member_id) 
+    return jsonify(response), status_code 
        
 
 

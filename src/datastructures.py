@@ -71,7 +71,7 @@ class FamilyStructure:
 
                 return {"message": f"El miembro con id {id} ya no forma parte de la familia"}, 200
             
-        return {"message": f"No se elimino el miembro de la familia con {id}"}, 404
+        return {"message": f"No se encontro el miembro de la familia con {id}"}, 404
 
     def get_member(self, id):
         #Revisa a todos los miembros de la lista 
@@ -79,7 +79,7 @@ class FamilyStructure:
             #comprueba si el id del miembro selecionado coincide con el id que se le dio como argumento
             if member["id"] == int(id):
                 # me devuelve el miembro econtrado 
-                return {"message": f"Se ha encontrado el miembro de la familia con el  id {id}"}, 200
+                return {"data": member}, 200
             
         return {"message": f"No se encontró el miembro de la familia con {id}"}, 404
         
